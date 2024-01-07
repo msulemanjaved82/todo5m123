@@ -1,34 +1,115 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:todo5m123/constants/colors.dart';
+import 'package:todo5m123/model/todo.dart';
+
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key}) : super(key: key);
+  MyHomePage({Key? key}) : super(key: key);
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
+enum Actions {delete,edit}
 class _MyHomePageState extends State<MyHomePage> {
+    final TodoL = Todo.todoList();
+    final _todoController = TextEditingController();
+
+
+    // this controller controls the navigation bar page's index
+    PageController _page = PageController(initialPage: 0);
+
 
   @override
   Widget build(BuildContext context) {
-    backgroundColor:  background;
+    backgroundColor: background;
     return Scaffold(
 
+  // Here I have created three main widgets.
+      // 1. appBar: Top navigation bar of screen.
+      // 2. bottomNavigationBar
+      // 3. body: include all the tasks, pending and completed
+      // 4. floatingActionButton: add icon button use to add new tasks
       appBar: _buildAppBar(),
-      body: Container(
-        padding: EdgeInsets.symmetric(vertical: 10),
-          child: buildColumn(),
+
+      // Added the PageView widget to navigate through the pages of the screen.
+        // Controller _page is used to control the page index
+      body: PageView(
+        controller: _page,
+        children: [
+          Stack(
+            children: [
+              Container(
+                padding: EdgeInsets.symmetric(vertical: 10),
+                child: buildColumn(),
+              ),
+            ],
+          ),
+          Center(
+            child: Container(
+              child: Text("calendar page"),
+            ),
+          ),
+          Center(
+            child: Container(
+              child: Text("Settings page"),
+            ),
+          ),
+        ],
       ),
+
+        //Add button
+        floatingActionButton: FloatingActionButton(
+                  onPressed: () => _displayDialog(context),
+                  tooltip: 'Add Task',
+                  child: const Icon(
+                    Icons.add,
+                    color: Colors.white,
+                  ),
+                  // elevation: 5.0,
+                ),
+
+        //floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+        //Bottom navigation bar buttons
+        bottomNavigationBar: BottomAppBar(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              IconButton(
+                onPressed: () {
+                  setState(() {
+                    _page.jumpToPage(0);
+                  });
+                },
+                icon: Icon(Icons.check_box, color: navBar),
+              ),
+              IconButton(
+                onPressed: () {
+                  setState(() {
+                    _page.jumpToPage(1);
+                  });
+                },
+                icon: Icon(Icons.calendar_month, color: navBar),
+              ),
+              IconButton(
+                onPressed: () {
+                  setState(() {
+                    _page.jumpToPage(2);
+                  });
+                },
+                icon: Icon(Icons.settings, color: navBar),
+              ),
+            ],
+          ),
+        )
     );
   }
 
   Column buildColumn() {
     return Column(
-
           children: [
             Container(
-
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: const BorderRadius.only(
@@ -47,9 +128,20 @@ class _MyHomePageState extends State<MyHomePage> {
               child: ListView(
                 shrinkWrap: true,
                 children: [
-                  buildListTile('Data Report'),
-                  buildListTile('Go to Gym'),
-                  buildListTile('BrainStorming')
+                  for(Todo Todos in TodoL)
+                    Slidable(
+                        endActionPane: ActionPane(
+                          motion: const StretchMotion(),
+                          children: [
+                            SlidableAction(
+                              onPressed:(context)=> _onDismissed(Todos.id),
+                              backgroundColor: Colors.red,
+                              icon: Icons.delete,
+                              label: 'Delete',
+                            ),
+                          ],
+                        ),
+                        child: buildListTile(Todos, ontodoChange: _handleToDoChange)),
                 ]
               )
             ),
@@ -57,22 +149,34 @@ class _MyHomePageState extends State<MyHomePage> {
         );
   }
 
-  ListTile buildListTile(String Title) {
+  ListTile buildListTile(todo, {required ontodoChange}) {
     DateTime now = DateTime.now();
     return ListTile(
-                  onTap: (){},
-                  leading: const Icon(Icons.check_box_outline_blank,color: Colors.grey,),
-                  title: Text(Title),
-                  trailing: Text('${_formatTime(now)}')
-    );
+                  onTap: (){
+                    ontodoChange(todo);
+                  },
+                  leading: Icon(
+                    todo.isDone ? Icons.check_box : Icons.check_box_outline_blank,
+                    color: Colors.grey,),
+                  title: Text(
+                    todo.task!,
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: todo.isDone ? Colors.black.withOpacity(0.4): Colors.black,
+                    ),
+                  ),
+                  trailing: Text('${_formatTime(now)}',
+                    style: TextStyle(color: todo.isDone ? Colors.black.withOpacity(0.4): Colors.black),)
 
+    );
   }
 
+  //This function is called in listTile function to add time to the task
   String _formatTime(DateTime dateTime) {
       return '${dateTime.hour}:${dateTime.minute}';
-
   }
 
+  //Top navigation bar
   AppBar _buildAppBar() {
     return AppBar(
       title: const Text('Today'),
@@ -86,9 +190,50 @@ class _MyHomePageState extends State<MyHomePage> {
             onPressed: (){
             },
             icon: const Icon(Icons.search)),
-        IconButton(
-            onPressed: (){},
-            icon: const Icon(Icons.more_horiz_rounded))
       ],);
   }
+
+    // function to change state of task, change completed task to pending and vice versa
+    void _handleToDoChange(Todo todo){
+      setState(() {
+        todo.isDone = !todo.isDone;
+      });
+    }
+
+    // method to add item in todoList by tapping on floating action button
+    void _addItem(String title){
+    TodoL.add(Todo(id: '5', task: title));
+    _todoController.clear();
+    }
+
+    void _onDismissed(String? ID){
+    final num = ID;
+      setState(() {
+        TodoL.removeWhere((item)=> item.id == num);
+      });
+    }
+
+    Future<Future> _displayDialog(BuildContext context) async{
+    return showDialog(
+        context: context,
+        builder: (BuildContext context){
+          return AlertDialog(
+            title: Text("Add task"),
+            content: TextField(
+              controller: _todoController,
+              decoration: const InputDecoration(hintText: 'Enter task here'),
+          ),
+            actions: [
+              IconButton(
+              onPressed: (){Navigator.of(context).pop();},
+              icon: Icon(Icons.cancel)),
+              IconButton(onPressed: (){Navigator.of(context).pop();
+                _addItem(_todoController.text);},
+                icon: Icon(Icons.add),
+          )
+          ],
+          );
+        });
+    }
+
 }
