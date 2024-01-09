@@ -17,7 +17,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
       appBar: _buildAppBar(),
       body: Container(
-        padding: EdgeInsets.symmetric(vertical: 10),
+        padding: const EdgeInsets.symmetric(vertical: 10),
           child: buildColumn(),
       ),
     );
@@ -63,7 +63,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   onTap: (){},
                   leading: const Icon(Icons.check_box_outline_blank,color: Colors.grey,),
                   title: Text(Title),
-                  trailing: Text('${_formatTime(now)}')
+                  trailing: Text(_formatTime(now))
     );
 
   }
