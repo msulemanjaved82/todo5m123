@@ -5,7 +5,7 @@ import 'package:todo5m123/model/todo.dart';
 
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key? key}) : super(key: key);
+  const MyHomePage({Key? key}) : super(key: key);
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -18,7 +18,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
 
     // this controller controls the navigation bar page's index
-    PageController _page = PageController(initialPage: 0);
+    final PageController _page = PageController(initialPage: 0);
 
 
   @override
@@ -41,19 +41,19 @@ class _MyHomePageState extends State<MyHomePage> {
           Stack(
             children: [
               Container(
-                padding: EdgeInsets.symmetric(vertical: 10),
+                padding: const EdgeInsets.symmetric(vertical: 10),
                 child: buildColumn(),
               ),
             ],
           ),
           Center(
             child: Container(
-              child: Text("calendar page"),
+              child: const Text("calendar page"),
             ),
           ),
           Center(
             child: Container(
-              child: Text("Settings page"),
+              child: const Text("Settings page"),
             ),
           ),
         ],
@@ -82,7 +82,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     _page.jumpToPage(0);
                   });
                 },
-                icon: Icon(Icons.check_box, color: navBar),
+                icon: const Icon(Icons.check_box, color: navBar),
               ),
               IconButton(
                 onPressed: () {
@@ -90,7 +90,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     _page.jumpToPage(1);
                   });
                 },
-                icon: Icon(Icons.calendar_month, color: navBar),
+                icon: const Icon(Icons.calendar_month, color: navBar),
               ),
               IconButton(
                 onPressed: () {
@@ -98,7 +98,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     _page.jumpToPage(2);
                   });
                 },
-                icon: Icon(Icons.settings, color: navBar),
+                icon: const Icon(Icons.settings, color: navBar),
               ),
             ],
           ),
@@ -165,7 +165,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       color: todo.isDone ? Colors.black.withOpacity(0.4): Colors.black,
                     ),
                   ),
-                  trailing: Text('${_formatTime(now)}',
+                  trailing: Text(_formatTime(now),
                     style: TextStyle(color: todo.isDone ? Colors.black.withOpacity(0.4): Colors.black),)
 
     );
@@ -218,7 +218,7 @@ class _MyHomePageState extends State<MyHomePage> {
         context: context,
         builder: (BuildContext context){
           return AlertDialog(
-            title: Text("Add task"),
+            title: const Text("Add task"),
             content: TextField(
               controller: _todoController,
               decoration: const InputDecoration(hintText: 'Enter task here'),
@@ -226,10 +226,10 @@ class _MyHomePageState extends State<MyHomePage> {
             actions: [
               IconButton(
               onPressed: (){Navigator.of(context).pop();},
-              icon: Icon(Icons.cancel)),
+              icon: const Icon(Icons.cancel)),
               IconButton(onPressed: (){Navigator.of(context).pop();
                 _addItem(_todoController.text);},
-                icon: Icon(Icons.add),
+                icon: const Icon(Icons.add),
           )
           ],
           );
