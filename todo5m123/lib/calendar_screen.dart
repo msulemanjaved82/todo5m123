@@ -9,7 +9,7 @@ class CalendarApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      HOME: CalendarScreen(),
+      Homes: CalendarScreen(),
     );
   }
 }
