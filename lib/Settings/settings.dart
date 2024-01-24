@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
       home: Scaffold(
         appBar: AppBar(
           title: const Text('Settings'),
-          ),
+        ),
 
         body: SettingsScreen(),
       ),
@@ -24,32 +24,31 @@ class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-          padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(16.0),
       child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-      const Text(
-      'Settings',
-      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Settings',
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+          ),
+          const SizedBox(height: 8),
+          const Text('Account', style: TextStyle(fontSize: 16)),
+          buildSettingItem(context, 'Profile'),
+          buildSettingItem(context, 'Password'),
+          buildSettingItem(context, 'Notifications'),
+          const SizedBox(height: 16),
+          const Text('More', style: TextStyle(fontSize: 16)),
+          buildSettingItem(context, 'Rate & Review'),
+          buildSettingItem(context, 'Help'),
+          const SizedBox(height: 16),
+          ElevatedButton(
+            onPressed: () => showLogoutDialog(context),
+            child: const Text('Logout'),
+          ),
+        ],
       ),
-      const SizedBox(height: 8),
-        const Text('Account', style: TextStyle(fontSize: 16)),
-        //buildSettingItem(context, 'Account'),
-        buildSettingItem(context, 'Profile'),
-        buildSettingItem(context, 'Password'),
-        buildSettingItem(context, 'Notifications'),
-        const SizedBox(height: 16),
-        const Text('More', style: TextStyle(fontSize: 16)),
-        buildSettingItem(context, 'Rate & Review'),
-        buildSettingItem(context, 'Help'),
-        const SizedBox(height: 16),
-        ElevatedButton(
-          onPressed: () => showLogoutDialog(context),
-          child: const Text('Logout'),
-        ),
-      ],
-      ),
-      );
+    );
   }
 
   Widget buildSettingItem(BuildContext context, String title) {
